@@ -1,8 +1,8 @@
 class DeployPr < Formula
   desc 'Automate deploy pr creation'
   homepage 'https://github.com/jonallured/deploy_pr'
-  url 'https://github.com/jonallured/deploy_pr/archive/v0.0.6.tar.gz'
-  sha256 '221cbad7984750ef3f449c1118600313945f2210bfa34ffdc8844a33eba7b338'
+  url 'https://github.com/jonallured/deploy_pr/archive/v0.0.7.tar.gz'
+  sha256 '34f02c710fcef167ef3a9ca0fa6ed679235a3f110b801fe9a982c6be161bda22'
 
   def install
     bin.install 'deploy_pr'
