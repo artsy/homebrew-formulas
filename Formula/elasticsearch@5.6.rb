@@ -8,7 +8,7 @@ class ElasticsearchAT56 < Formula
 
   keg_only :versioned_formula
 
-  depends_on "semeru-jdk8-open"
+  depends_on cask: "semeru-jdk8-open"
 
   def cluster_name
     "elasticsearch_#{ENV["USER"]}"
