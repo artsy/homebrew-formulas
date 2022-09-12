@@ -1,3 +1,4 @@
+# Forked from https://github.com/artsy/homebrew-formulas/commit/582dab57f89ecda6b67f8dd8705534ad934879e7
 class ElasticsearchAT6 < Formula
     desc "Distributed search & analytics engine"
     homepage "https://www.elastic.co/products/elasticsearch"
