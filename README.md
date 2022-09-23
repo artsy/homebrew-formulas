@@ -2,7 +2,7 @@
 
 A [Homebrew tap][tap] for Artsy scripts.
 
-[tap]: https://github.com/Homebrew/brew/blob/master/docs/brew-tap.md
+[tap]: https://github.com/Homebrew/brew/blob/master/docs/Taps.md
 
 ## Usage
 
