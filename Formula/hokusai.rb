@@ -1,9 +1,9 @@
 class Hokusai < Formula
   desc 'Hokusai is a Docker + Kubernetes CLI for application developers'
   homepage 'https://github.com/artsy/hokusai'
-  url 'https://artsy-provisioning-public.s3.amazonaws.com/hokusai/hokusai-1.0.5-Darwin-x86_64.tar.gz'
-  sha256 '973c6d85d5ad9b474cb0217eeba17e968656bf8c9de44b413d3de5ae415c312e'
-  version '1.0.5'
+  url 'https://artsy-provisioning-public.s3.amazonaws.com/hokusai/hokusai-1.1.0-Darwin-x86_64.tar.gz'
+  sha256 '54f85851f8a1e382b160d2212d5696c8d2f67924bb8f3e72ff53cf3ee046a9e7'
+  version '1.1.0'
 
   def install
     bin.install Dir["*"]
