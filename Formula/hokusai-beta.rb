@@ -2,7 +2,7 @@ class HokusaiBeta < Formula
   desc 'Hokusai is a Docker + Kubernetes CLI for application developers'
   homepage 'https://github.com/artsy/hokusai'
   url 'https://artsy-provisioning-public.s3.amazonaws.com/hokusai/hokusai-beta-Darwin-x86_64.tar.gz'
-  sha256 'c3fc540150c46dc60770df312aae42b28c7075d31f8bfc1e0e871a2dc41063af'
+  sha256 '285adbb489af825068be1652eabd42dd1df3079296714913135b1670e5667d6b'
   version 'beta'
 
   def install
