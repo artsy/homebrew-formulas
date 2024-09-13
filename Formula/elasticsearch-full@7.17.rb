@@ -32,6 +32,7 @@ class ElasticsearchFullAT717 < Formula
 
         # Disable xpack.ml features on mac due to mismatched signatures/paths
         s.sub!(%r{\Z}, "\nxpack.ml.enabled: false\n")
+        s.sub!(%r{\Z}, "\nxpack.security.enabled: false\n")
       end
   
       inreplace "#{libexec}/config/jvm.options", %r{logs/gc.log}, "#{var}/log/elasticsearch/gc.log"
