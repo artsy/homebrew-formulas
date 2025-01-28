@@ -15,7 +15,7 @@ $ brew tap artsy/formulas
 Install the packages it contains like any other Homebrew package:
 
 ```
-$ brew install copy_env
+$ brew install hokusai
 ```
 
 ## Updating formulas
@@ -25,7 +25,7 @@ the URL to the package. Once you've done that, comment out the SHA line and then
 run a fetch command:
 
 ```
-$ brew fetch --force Formula/deploy_pr.rb
+$ brew fetch --force Formula/hokusai.rb
 ```
 
 You'll get a warning because the SHA was blank, but then it'll also print out
