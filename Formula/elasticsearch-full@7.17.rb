@@ -8,24 +8,24 @@ class ElasticsearchFullAT717 < Formula
     version "7.17.14"
     sha256 "3dc253b91a3fc984e2bdaaa43f64ae3844c8dfebd0cd30ab59756a887fcbea74"
     keg_only :versioned_formula
-  
+
     def cluster_name
       "elasticsearch_#{ENV["USER"]}"
     end
-  
+
     def install
       # Install everything else into package directory
       libexec.install "bin", "config", "jdk.app", "lib", "modules"
-  
+
       inreplace libexec/"bin/elasticsearch-env",
                 "if [ -z \"$ES_PATH_CONF\" ]; then ES_PATH_CONF=\"$ES_HOME\"/config; fi",
                 "if [ -z \"$ES_PATH_CONF\" ]; then ES_PATH_CONF=\"#{etc}/elasticsearch\"; fi"
-  
+
       # Set up Elasticsearch for local development:
       inreplace "#{libexec}/config/elasticsearch.yml" do |s|
         # 1. Give the cluster a unique name
         s.gsub!(/#\s*cluster\.name: .*/, "cluster.name: #{cluster_name}")
-  
+
         # 2. Configure paths
         s.sub!(%r{#\s*path\.data: /path/to.+$}, "path.data: #{var}/lib/elasticsearch/")
         s.sub!(%r{#\s*path\.logs: /path/to.+$}, "path.logs: #{var}/log/elasticsearch/")
@@ -34,24 +34,25 @@ class ElasticsearchFullAT717 < Formula
         s.sub!(%r{\Z}, "\nxpack.ml.enabled: false\n")
         s.sub!(%r{\Z}, "\nxpack.security.enabled: false\n")
       end
-  
+
       inreplace "#{libexec}/config/jvm.options", %r{logs/gc.log}, "#{var}/log/elasticsearch/gc.log"
-  
+
       # Move config files into etc
-      (etc/"elasticsearch").install Dir[libexec/"config/*"]
-      (libexec/"config").rmtree
-  
+      config_files = Dir[libexec/"config/*"].reject { |f| File.directory?(f) && Dir.empty?(f) }
+      (etc/"elasticsearch").install config_files unless config_files.empty?
+      FileUtils.rm_r(libexec/"config")
+
       Dir.foreach(libexec/"bin") do |f|
         next if f == "." || f == ".." || !File.extname(f).empty?
-  
+
         bin.install libexec/"bin"/f
       end
       bin.env_script_all_files(libexec/"bin", {})
-  
+
       system "codesign", "-f", "-s", "-", libexec/"modules/x-pack-ml/platform/darwin-x86_64/controller.app", "--deep"
       system "find", libexec/"jdk.app/Contents/Home/bin", "-type", "f", "-exec", "codesign", "-f", "-s", "-", "{}", ";"
     end
-  
+
     def post_install
       # Make sure runtime directories exist
       (var/"lib/elasticsearch/#{cluster_name}").mkpath
@@ -60,7 +61,7 @@ class ElasticsearchFullAT717 < Formula
       (var/"elasticsearch/plugins").mkpath
       ln_s var/"elasticsearch/plugins", libexec/"plugins"
     end
-  
+
     def caveats
       <<~EOS
         Data:    #{var}/lib/elasticsearch/#{cluster_name}/
@@ -69,7 +70,7 @@ class ElasticsearchFullAT717 < Formula
         Config:  #{etc}/elasticsearch/
       EOS
     end
-  
+
     # https://docs.brew.sh/Formula-Cookbook#service-block-methods
     service do
       run opt_bin/"elasticsearch"
@@ -78,23 +79,23 @@ class ElasticsearchFullAT717 < Formula
       error_log_path var/"log/elasticsearch.log"
       log_path var/"log/elasticsearch.log"
     end
-  
+
     test do
       require "socket"
-  
+
       server = TCPServer.new(0)
       port = server.addr[1]
       server.close
-  
+
       mkdir testpath/"config"
       cp etc/"elasticsearch/jvm.options", testpath/"config"
       cp etc/"elasticsearch/log4j2.properties", testpath/"config"
       touch testpath/"config/elasticsearch.yml"
-  
+
       ENV["ES_PATH_CONF"] = testpath/"config"
-  
+
       system "#{bin}/elasticsearch-plugin", "list"
-  
+
       pid = testpath/"pid"
       begin
         system "#{bin}/elasticsearch", "-d", "-p", pid,
@@ -107,11 +108,11 @@ class ElasticsearchFullAT717 < Formula
       ensure
         Process.kill(9, pid.read.to_i)
       end
-  
+
       server = TCPServer.new(0)
       port = server.addr[1]
       server.close
-  
+
       rm testpath/"config/elasticsearch.yml"
       (testpath/"config/elasticsearch.yml").write <<~EOS
         path.data: #{testpath}/data
@@ -119,7 +120,7 @@ class ElasticsearchFullAT717 < Formula
         node.name: test-es-path-conf
         http.port: #{port}
       EOS
-  
+
       pid = testpath/"pid"
       begin
         system "#{bin}/elasticsearch", "-d", "-p", pid, "-Expack.security.enabled=false"
